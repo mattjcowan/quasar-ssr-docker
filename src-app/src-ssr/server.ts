@@ -19,6 +19,8 @@ import {
   ssrServeStaticContent,
 } from 'quasar/wrappers';
 
+import { createProxyMiddleware, Filter, Options, RequestHandler } from 'http-proxy-middleware'
+
 /**
  * Create your webserver and return its instance.
  * If needed, prepare your webserver to receive
@@ -36,6 +38,19 @@ export const create = ssrCreate((/* { ... } */) => {
   // place here any middlewares that
   // absolutely need to run before anything else
   if (process.env.PROD) {
+    app.use('/_api', createProxyMiddleware({
+      target: 'https://jsonplaceholder.typicode.com',
+      changeOrigin: true,
+      ws: false,
+      // pathRewrite: {
+      //   '^/_api': ''
+      // },
+      pathRewrite: /* async */ function (path, req) {
+        console.log('SSR api proxy: ' + req.url)
+        return path.replace('/_api', '')
+      }
+    }))
+
     app.use(compression());
   }
 

@@ -91,6 +91,22 @@ module.exports = configure(function (/* ctx */) {
       open: false, // opens browser window automatically,
       hmr: {
         port: 9025
+      },
+
+      // if the proxy is required in SSR mode, add compatible mappings in `src-ssr/server.ts`
+      proxy: {
+        '/_api': {
+          target: 'https://jsonplaceholder.typicode.com',
+          changeOrigin: true,
+          ws: false,
+          // rewrite: {
+          //   '^/_api': ''
+          // },
+          rewrite: /* async */ function (path) {
+            console.log('DEV api proxy: ' + path)
+            return path.replace('/_api', '')
+          }
+        }
       }
     },
 
