@@ -70,22 +70,33 @@ Create a `docker-compose.yml` file:
 version: "3.8"
 services:
   # run the following scripts first:
-  # ./scripts/docker-build-dev-image.sh
+  # ./scripts/docker-build-dev-spa-image.sh
+  # ./scripts/docker-build-dev-ssr-image.sh
   # ./scripts/docker-build-dist-spa-image.sh
   # ./scripts/docker-build-dist-ssr-image.sh
-  quasar_app_dev:
+
+  # quasar_app_dev_spa:
+  #   build:
+  #     dockerfile: dockerfiles/Dev.SPA.Dockerfile
+  #   volumes:
+  #     - ./src-app:/quasar_app
+  #   ports:
+  #     - "9000:9000"
+  #     - "9025:9025"
+  quasar_app_dev_ssr:
     build:
-      dockerfile: dockerfiles/Dev.Dockerfile
+      dockerfile: dockerfiles/Dev.SSR.Dockerfile
     volumes:
       - ./src-app:/quasar_app
     ports:
-      - "9000:9000"
-  quasar_spa_app_latest:
-    # image: <your-dockerid>/quasar_spa_app:latest
-    image: quasar_app:dist-spa
-    ports:
-      - "8080:80"
-  quasar_ssr_app_latest:
+      - "9100:9100"
+      - "9025:9025"
+  # quasar_app_dist_spa:
+  #   # image: <your-dockerid>/quasar_spa_app:latest
+  #   image: quasar_app:dist-spa
+  #   ports:
+  #     - "8080:80"
+  quasar_app_dist_ssr:
     # image: <your-dockerid>/quasar_spa_app:latest
     image: quasar_app:dist-ssr
     ports:
@@ -100,9 +111,8 @@ docker compose up --force-recreate -d
 
 You can then check out:
 
-- Dev with HMR on http://localhost:9000
-- SPA version on http://localhost:8080
-- SSR version on http://localhost:3000
+- Dev with SSR and HMR at http://localhost:9100 (HMR on port 9025)
+- Production with SSR at http://localhost:3000
 
 Remove the containers using:
 
